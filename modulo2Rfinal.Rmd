@@ -1,0 +1,165 @@
+
+
+---
+title: Técnicas y Herramientas Modernas I-Módulo de programación en Rstudio
+author:
+  - name: Francisco Artero
+    email: f.r.artero1234@gmail.com
+    affiliation: Facultad de Ingenieria
+    correspondingauthor: true
+    footnote: 1
+  - name: Marcos Ander Egg
+    email: mf.mg.anderegg@gmail.com
+    affiliation: Facultad de Ingenieria
+  - name: Franco Consorte
+    email: franco@gmail.com
+    affiliation: Facultad de Ingenieria
+    
+
+    footnote: 2
+address:
+  - code: Facultad de Ingenieria
+    address:  Centro universitario M(5500) Mendoza
+
+
+footnote:
+  - code: 1
+    text: "Primera nota."
+abstract: |
+  El objetivo del módulo 2 fue aprender a utilizar y estudiar el lenguaje de programación R, realizando ejercitación de distintas complejidades y distintas herramientas.
+  
+keywords: 
+  - modelo matemático
+  - iteración
+  - 
+
+journal: 
+date: "`r Sys.Date()`"
+classoption: preprint, 3p, authoryear
+bibliography: mybibfile.bib
+linenumbers: false
+numbersections: true
+# csl: https://www.zotero.org/styles/elsevier-harvard
+output: 
+  rticles::elsevier_article:
+    keep_tex: true
+    citation_package: natbib
+editor_options: 
+  markdown: 
+    wrap: 72
+---
+
+*Ejercicio N1: Crear un vector secuencia.*
+
+Probamos dos códigos distintos para analizar como funcionan ambos y cuanto tiempo tardan. Su finalidad es la misma para los dos, crean un vector.
+
+#Codigo generado con for:
+
+```{r}
+A<- c()
+start_time<-Sys.time()
+for (i in 1:50000) {A[i]<-(i*2)}
+head (A)
+tail(A)
+end_time<- Sys.time() 
+end_time-start_time
+```
+
+#Codigo generado con R
+
+```{r}
+ti<- Sys.time()
+A<-seq(1,100000,2)
+head(A)
+tail(A)
+tf<-Sys.time()
+tf-ti
+```
+
+*Ejercicio N2: Serie de Fibonacci.*
+
+
+
+$$
+f_{0}=0;
+f_{1}=1;f_{n+1}=f_{n}+f_{n-1}
+$$ 
+Observamos cuantas iteraciones se utilizan para que la serie logre un valor mayor a 1000000
+
+```{r}
+f0<-0
+f1<-1
+it<-0
+f2<-0
+vec<- c(f1,f2)
+while(f2<=1000000){
+it<-(it+1)
+f2<-(f0+f1)
+vec<- c(vec,f2)
+f0<-f1
+f1<-f2
+}
+it
+tail(vec)
+```
+
+Concluimos que el algoritmos ultiliza alrededor de 30 iteraciones para logar su objetivo.
+*Ejercicio N3:Ordenamiento de un vector por el método burbuja*
+
+Realizamos el ordenamiento de los valores con ayuda del método burbuja y el método sort nativo de R.
+
+```{r}
+library(microbenchmark)
+x<-sample(1:100,100)
+mbm<-microbenchmark(
+##burbuja
+"burbuja"={
+  burbuja<-function(x){
+    n<-length(x)
+    for(j in 1:(n-1)){
+      for(i in 1:(n-j)){
+        if(x[i]>x[i+1]){
+          temporal<-x[i]
+          x[i]<-x[i+1]
+          x[i+1]<-temporal
+        }
+      }
+    }
+  return(x)  
+  }
+res<-burbuja(x) 
+},
+##R sort
+"sort"={
+  sort(x)
+}
+)
+mbm
+library(ggplot2)
+autoplot(mbm)
+```
+
+*Ejercicio N4:Progresión geométrica de los casos de Covid-19.*
+
+Utilizando los datos del archivo casos de los contagios de Argentina, vamos a calcular mediante un modelo, cuantos días tardaría en contagiarse 40 millones de habitantes. 
+
+```{r}
+f1<- 51778
+f2<-0
+dia<-0
+vector<- c(f1)
+F<-1.62
+
+while(f2<=40000000){
+  dia<-dia+1
+  f2<-F*f1
+  vector<-c(vec,f2)
+  f1<-f2
+}
+dia
+vector
+plot(vector)
+hist(vector)
+```
+
+El modelo nos indica que al día 14 lograremos la cantidad esperada.
